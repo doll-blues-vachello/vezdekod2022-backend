@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
-import ru.leadpogrommer.vk22.backend.dto.GetVotesResponseDto
-import ru.leadpogrommer.vk22.backend.dto.PostVoteRequestDto
+import ru.leadpogrommer.vk22.shared.dto.GetVotesResponseDto
+import ru.leadpogrommer.vk22.shared.dto.PostVoteRequestDto
 import ru.leadpogrommer.vk22.backend.service.RateService
 import ru.leadpogrommer.vk22.backend.service.VoteService
+import ru.leadpogrommer.vk22.shared.dto.GetVotesStatsDto
 import java.util.*
 
 
@@ -66,9 +67,7 @@ class VoteController(
 
         val resp = voteService.getVotesByIntervals(start, end, intervalsCount, artists)
 
-        return object {
-            val data = resp
-        }
+        return GetVotesStatsDto(resp)
 
     }
 

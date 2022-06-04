@@ -1,4 +1,4 @@
-package ru.leadpogrommer.vk22.backend.dto
+package ru.leadpogrommer.vk22.shared.dto
 
 class PostVoteRequestDto(
     val phone: String,
@@ -9,3 +9,5 @@ class GetVotesResponseDto(artistData: Map<String, ULong>){
     data class Inner(val name: String, val votes: ULong)
     val data = artistData.map { Inner(it.key, it.value) }.toList()
 }
+
+class GetVotesStatsDto(val data: List<IntervalDto>)

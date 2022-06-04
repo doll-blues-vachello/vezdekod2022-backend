@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Service
+import ru.leadpogrommer.vk22.shared.dto.IntervalDto
 import java.lang.Math.min
 //import java.lang.I
 import java.util.*
@@ -58,13 +59,9 @@ class VoteService {
         }
     }
 
-    data class IntervalData(
-        val start: Long,
-        val end: Long,
-        val votes: Int
-    )
 
-    fun getVotesByIntervals(start: Long, end: Long, intervalsCount: Int, artists: Set<String>):List<IntervalData>{
+
+    fun getVotesByIntervals(start: Long, end: Long, intervalsCount: Int, artists: Set<String>):List<IntervalDto>{
         val maxPossibleIntervals = end - start
         val finalIntervalsCount = min(maxPossibleIntervals.toInt(), intervalsCount)
 
@@ -82,7 +79,7 @@ class VoteService {
                     }.count()
                 }
             }.sum()
-            IntervalData(interval.first, interval.last+1, votesCount)
+            IntervalDto(interval.first, interval.last+1, votesCount)
         }.toList()
 
     }

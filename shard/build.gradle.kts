@@ -8,7 +8,7 @@ plugins {
     kotlin("plugin.jpa") version "1.6.21"
 }
 
-group = "ru.leadpogrommer.vk22"
+group = "ru.leadpogrommer.vk22.backend"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
@@ -26,6 +26,7 @@ dependencies {
 //    developmentOnly("org.springframework.boot:spring-boot-devtools")
 //    runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation(project(":shared"))
 }
 
 tasks.withType<KotlinCompile> {
