@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 import ru.leadpogrommer.vk22.backend.dto.GetVotesResponseDto
@@ -49,6 +50,26 @@ class VoteController(
     @GetMapping("/votes")
     fun getVotes(): GetVotesResponseDto{
         return GetVotesResponseDto(voteService.getVotes())
+    }
+
+    @GetMapping("/votes/stats")
+    fun getVotesStats(
+        @RequestParam(name = "from", required = false) _start: Long?,
+        @RequestParam(name = "to", required = false) _end: Long?,
+        @RequestParam(name = "intervals", required = false) _intervalsCount: Int?,
+        @RequestParam(name = "artists", required = false) _artists: Array<String>?
+    ): Any{
+        val start = _start ?: voteService.firstVoteTime
+        val end = _end ?: (voteService.lastVoteTime)
+        val intervalsCount = _intervalsCount ?: 10
+        val artists = _artists?.toSet() ?: voteService.artists
+
+        val resp = voteService.getVotesByIntervals(start, end, intervalsCount, artists)
+
+        return object {
+            val data = resp
+        }
+
     }
 
     fun convertPhone(phone: String): ULong?{
