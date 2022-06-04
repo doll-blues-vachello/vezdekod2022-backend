@@ -16,6 +16,7 @@ import ru.leadpogrommer.vk22.backend.service.RateService
 import ru.leadpogrommer.vk22.backend.service.VoteService
 import ru.leadpogrommer.vk22.shared.dto.GetVotesStatsDto
 import java.util.*
+import java.util.logging.Logger
 
 
 @RestController
@@ -24,7 +25,8 @@ class VoteController(
     val voteService: VoteService,
     val rateService: RateService
     ) {
-    val phoneRegex = Regex("9\\d{9}")
+    private val phoneRegex = Regex("9\\d{9}")
+    private val log = Logger.getLogger("VOTES")
 
     @PostMapping("/votes")
     fun postVote(@RequestBody req: PostVoteRequestDto,): ResponseEntity<Unit>{
@@ -40,6 +42,8 @@ class VoteController(
             if(!rateData.success)set("Retry-After", "${rateData.resetTime - Date().time/1000}")
         }
 
+        log.info("Voting for ${req.artist}")
+
         if(rateData.success){
             voteService.createVote(phone, req.artist)
             return ResponseEntity(responseHeaders, HttpStatus.CREATED)
@@ -50,6 +54,7 @@ class VoteController(
 
     @GetMapping("/votes")
     fun getVotes(): GetVotesResponseDto{
+        log.info("Getting votes")
         return GetVotesResponseDto(voteService.getVotes())
     }
 
@@ -59,11 +64,13 @@ class VoteController(
         @RequestParam(name = "to", required = false) _end: Long?,
         @RequestParam(name = "intervals", required = false) _intervalsCount: Int?,
         @RequestParam(name = "artists", required = false) _artists: Array<String>?
-    ): Any{
+    ): GetVotesStatsDto{
         val start = _start ?: voteService.firstVoteTime
         val end = _end ?: (voteService.lastVoteTime)
         val intervalsCount = _intervalsCount ?: 10
         val artists = _artists?.toSet() ?: voteService.artists
+
+        log.info("Getting stats: from=$start, end=$end, intervals=$intervalsCount, artists=$artists")
 
         val resp = voteService.getVotesByIntervals(start, end, intervalsCount, artists)
 
